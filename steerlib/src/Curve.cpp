@@ -1,4 +1,4 @@
-//
+// Copyright (c) 2015 Nilay Chakraborty
 // Copyright (c) 2015 Mahyar Khayatkhoei
 // Copyright (c) 2009-2014 Shawn Singh, Glen Berseth, Mubbasir Kapadia, Petros Faloutsos, Glenn Reinman
 // See license.txt for complete license.
@@ -65,15 +65,10 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 // Sort controlPoints vector in ascending order: min-first
 void Curve::sortControlPoints()
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	std::sort(controlPoints.begin(),controlPoints.end(), [](CurvePoint a , CurvePoint b)
 	{
-		std::cerr << "ERROR>>>>Member function sortControlPoints is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-
+		return a.time<b.time;
+	});
 	return;
 }
 
@@ -109,33 +104,23 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 // Check Roboustness
 bool Curve::checkRobust()
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function checkRobust is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-
-
-	return true;
+	if (controlPoints.size() > 1)
+		return true;
+	else
+		return false;
 }
 
 // Find the current time interval (i.e. index of the next control point to follow according to current time)
 bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 {
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
+	if (controlPoints[nextPoint+1].time == time)
 	{
-		std::cerr << "ERROR>>>>Member function findTimeInterval is not implemented!" << std::endl;
-		flag = true;
+		nextPoint++;
+		return true;
 	}
-	//=========================================================================
-
-
-	return true;
+	else
+		return false;
+	
 }
 
 // Implement Hermite curve
@@ -144,19 +129,18 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 	Point newPosition;
 	float normalTime, intervalTime;
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function useHermiteCurve is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-
 
 	// Calculate time interval, and normal time required for later curve calculations
-
+	normalTime = controlPoints[nextPoint-1].time;
+	intervalTime = time - normalTime;
 	// Calculate position at t = time on Hermite curve
+	for (float t = normalTime; t <= normalTime + intervalTime; t+=0.001f)
+	{
+		newPosition.x = (2 *t*t*t - 3 *t*t + 1)*controlPoints[nextPoint - 1].position.x + (t*t*t - 2*t*t + t)*controlPoints[nextPoint - 1].tangent.x + (-2 *t*t*t + 3 * t*t )*controlPoints[nextPoint].position.x + (t*t*t - t*t)*controlPoints[nextPoint].tangent.x;
+		newPosition.y = (2 * t*t*t - 3 * t*t + 1)*controlPoints[nextPoint - 1].position.y + (t*t*t - 2 * t*t + t)*controlPoints[nextPoint - 1].tangent.y + (-2 * t*t*t + 3 * t*t)*controlPoints[nextPoint].position.y + (t*t*t - t*t)*controlPoints[nextPoint].tangent.y;
+		newPosition.z = (2 * t*t*t - 3 * t*t + 1)*controlPoints[nextPoint - 1].position.z + (t*t*t - 2 * t*t + t)*controlPoints[nextPoint - 1].tangent.z + (-2 * t*t*t + 3 * t*t)*controlPoints[nextPoint].position.z + (t*t*t - t*t)*controlPoints[nextPoint].tangent.z;
+
+	}
 
 	// Return result
 	return newPosition;
@@ -167,15 +151,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 {
 	Point newPosition;
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function useCatmullCurve is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-
+	
 
 	// Calculate time interval, and normal time required for later curve calculations
 
