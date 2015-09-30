@@ -55,7 +55,7 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 	glColor3f(curveColor.r,curveColor.g,curveColor.b);
 	glLineWidth(curveThickness);
 	glBegin(GL_LINES);
-	for (int t = 0; t <= controlPoints[controlPoints.size() - 1].time; t++)
+	for (float t = 0; t <= controlPoints[controlPoints.size() - 1].time; t+=0.001)
 	{
 		if (calculatePoint(p, t))
 		{
