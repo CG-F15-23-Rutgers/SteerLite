@@ -45,19 +45,25 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 {
 #ifdef ENABLE_GUI
 
-	//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function drawCurve is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-
+	Point p;
 	// Robustness: make sure there is at least two control point: start and end points
-
+	if (!checkRobust())
+	{
+		return;
+	}
 	// Move on the curve from t=0 to t=finalPoint, using window as step size, and linearly interpolate the curve points
-	
+	glColor3f(curveColor.r,curveColor.g,curveColor.b);
+	glLineWidth(curveThickness);
+	glBegin(GL_LINES);
+	for (int t = 0; t <= controlPoints[controlPoints.size() - 1].time; t++)
+	{
+		if (calculatePoint(p, t))
+		{
+			glVertex3f(p.x, p.y, p.z);
+		}
+	}
+	glEnd();
+	glFlush();
 	return;
 #endif
 }
@@ -132,15 +138,11 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 
 	// Calculate time interval, and normal time required for later curve calculations
 	normalTime = controlPoints[nextPoint-1].time;
-	intervalTime = time - normalTime;
+	intervalTime = time;
 	// Calculate position at t = time on Hermite curve
-	for (float t = normalTime; t <= normalTime + intervalTime; t+=0.001f)
-	{
-		newPosition.x = (2 *t*t*t - 3 *t*t + 1)*controlPoints[nextPoint - 1].position.x + (t*t*t - 2*t*t + t)*controlPoints[nextPoint - 1].tangent.x + (-2 *t*t*t + 3 * t*t )*controlPoints[nextPoint].position.x + (t*t*t - t*t)*controlPoints[nextPoint].tangent.x;
-		newPosition.y = (2 * t*t*t - 3 * t*t + 1)*controlPoints[nextPoint - 1].position.y + (t*t*t - 2 * t*t + t)*controlPoints[nextPoint - 1].tangent.y + (-2 * t*t*t + 3 * t*t)*controlPoints[nextPoint].position.y + (t*t*t - t*t)*controlPoints[nextPoint].tangent.y;
-		newPosition.z = (2 * t*t*t - 3 * t*t + 1)*controlPoints[nextPoint - 1].position.z + (t*t*t - 2 * t*t + t)*controlPoints[nextPoint - 1].tangent.z + (-2 * t*t*t + 3 * t*t)*controlPoints[nextPoint].position.z + (t*t*t - t*t)*controlPoints[nextPoint].tangent.z;
-
-	}
+		newPosition.x = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.x + (intervalTime*intervalTime*intervalTime - 2* intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.x + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.x + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.x;
+		newPosition.y = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.y + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.y + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.y + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.y;
+		newPosition.z = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.z + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.z + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.z + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.z;
 
 	// Return result
 	return newPosition;
