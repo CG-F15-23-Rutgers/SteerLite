@@ -1,9 +1,9 @@
-﻿Build started 9/30/2015 5:48:43 AM.
-     1>Project "C:\Users\NILAY\Computer_Graphics\SteerLite\simpleAI\build\win32\simpleAI.vcxproj" on node 4 (Rebuild target(s)).
+﻿Build started 9/30/2015 4:33:11 PM.
+     1>Project "C:\Users\NILAY\Computer_Graphics\SteerLite\simpleAI\build\win32\simpleAI.vcxproj" on node 5 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I..\..\..\util\include /I..\..\include /I..\..\..\steerlib\include /I..\..\..\external /Zi /nologo /W3 /WX- /MP /O2 /Oi /Ot /Oy- /GL /D ENABLE_GUI /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\SimpleAgent.cpp ..\..\src\SimpleAIModule.cpp
-         SimpleAgent.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I..\..\..\util\include /I..\..\include /I..\..\..\steerlib\include /I..\..\..\external /Zi /nologo /W3 /WX- /MP /O2 /Oi /Ot /Oy- /GL /D ENABLE_GUI /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\src\SimpleAIModule.cpp ..\..\src\SimpleAgent.cpp
          SimpleAIModule.cpp
+         SimpleAgent.cpp
      1>c:\users\nilay\computer_graphics\steerlite\util\include\UtilGlobals.h(17): warning C4005: 'UTIL_API': macro redefinition (compiling source file ..\..\src\SimpleAIModule.cpp)
          c:\users\nilay\computer_graphics\steerlite\steerlib\include\Globals.h(22): note: see previous definition of 'UTIL_API' (compiling source file ..\..\src\SimpleAIModule.cpp)
      1>c:\users\nilay\computer_graphics\steerlite\util\include\UtilGlobals.h(17): warning C4005: 'UTIL_API': macro redefinition (compiling source file ..\..\src\SimpleAgent.cpp)
@@ -29,11 +29,13 @@
          Release\SimpleAIModule.obj
             Creating library C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\simpleAI.lib and object C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\simpleAI.exp
          Generating code
-         All 1004 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+         0 of 1004 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+           0 functions were new in current compilation
+           0 functions had inline decision re-evaluated but remain unchanged
          Finished generating code
          simpleAI.vcxproj -> C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\simpleAI.dll
-     1>Done Building Project "C:\Users\NILAY\Computer_Graphics\SteerLite\simpleAI\build\win32\simpleAI.vcxproj" (Rebuild target(s)).
+     1>Done Building Project "C:\Users\NILAY\Computer_Graphics\SteerLite\simpleAI\build\win32\simpleAI.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:15.93
+Time Elapsed 00:00:14.44
