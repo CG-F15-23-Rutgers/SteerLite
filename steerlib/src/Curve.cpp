@@ -72,7 +72,7 @@ void Curve::sortControlPoints()
 	});
 
 	for (std::vector<CurvePoint>::size_type i = 0; i != controlPoints.size(); i++) {
-		std::cout << controlPoints[i].time;
+		//std::cout << controlPoints[i].time;
 	}
 
 	return;
@@ -126,7 +126,7 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 
 	do{
 		if (nextPoint == 0) {
-			previous = 0;
+			previous = controlPoints[nextPoint].time;
 		}
 		else {
 			previous = controlPoints[nextPoint - 1].time;
@@ -138,9 +138,6 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 		else {
 			return false;
 		}
-		std::cout << time << std::endl;
-		std::cout << previous << std::endl;
-		std::cout << next << std::endl;
 		nextPoint++;
 	} while (!(time >= previous && time < next));
 
@@ -164,12 +161,55 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 	//=========================================================================*/
 
 	// Calculate time interval, and normal time required for later curve calculations
-	normalTime = controlPoints[nextPoint - 1].time;
-	intervalTime = time;
+	float previousTime, nextTime;
+
+	float nextX, nextY, nextZ, previousX, previousY, previousZ, nextTanX, nextTanY, nextTanZ, previousTanX, previousTanY, previousTanZ;
+
+	previousTime = controlPoints[nextPoint - 1].time;
+	previousX = controlPoints[nextPoint - 1].position.x;
+	previousY = controlPoints[nextPoint - 1].position.y;
+	previousZ = controlPoints[nextPoint - 1].position.z;
+	nextTime = controlPoints[nextPoint].time;
+	nextX = controlPoints[nextPoint].position.x;
+	nextY = controlPoints[nextPoint].position.y;
+	nextZ = controlPoints[nextPoint].position.z;
+	nextTanX = controlPoints[nextPoint].tangent.x;
+	nextTanY = controlPoints[nextPoint].tangent.y;
+	nextTanZ = controlPoints[nextPoint].tangent.z;
+	previousTanX = controlPoints[nextPoint - 1].tangent.x;
+	previousTanY = controlPoints[nextPoint - 1].tangent.y;
+	previousTanZ = controlPoints[nextPoint - 1].tangent.z;
+
+	intervalTime = nextTime - previousTime;
+	normalTime = (time - previousTime) / intervalTime;
+
 	// Calculate position at t = time on Hermite curve
-	newPosition.x = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.x + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.x + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.x + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.x;
-	newPosition.y = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.y + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.y + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.y + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.y;
-	newPosition.z = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.z + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.z + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.z + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.z;
+	float aX, bX, cX, dX;
+	aX = -2 * (nextX - previousX) + (nextTanX + previousTanX)/(intervalTime);
+	bX = 3 * (nextX - previousX) - (2 * nextTanX + previousTanX) / (intervalTime);
+	cX = previousTanX;
+	dX = previousX;
+	newPosition.x = aX*pow(normalTime,3) + bX*pow(normalTime, 2) + cX*normalTime + dX;
+
+	float aY, bY, cY, dY;
+	aY = -2 * (nextY - previousY) + (nextTanY + previousTanY) / (intervalTime);
+	bY = 3 * (nextY - previousY) - (2 * nextTanY + previousTanY) / (intervalTime);
+	cY = previousTanY;
+	dY = previousY;
+	newPosition.y = aY*pow(normalTime, 3) + bY*pow(normalTime, 2) + cY*normalTime + dY;
+
+	float aZ, bZ, cZ, dZ;
+	aZ = -2 * (nextZ - previousZ) + (nextTanZ + previousTanZ) / (intervalTime);
+	bZ = 3 * (nextZ - previousZ) - (2 * nextTanZ + previousTanZ) / (intervalTime);
+	cZ = previousTanZ;
+	dZ = previousZ;
+	newPosition.z = aZ*pow(normalTime, 3) + bZ*pow(normalTime, 2) + cZ*normalTime + dZ;
+
+	std::cout << (time - previousTime) << " " << intervalTime << std::endl;
+	//std::cout << previousTime << " " << nextTime << std::endl;
+	//std::cout << previousX << " " << newPosition.x << std::endl;
+	//std::cout << previousY << " " << newPosition.y << std::endl;
+	//std::cout << previousZ << " " << newPosition.z << std::endl;
 
 	// Return result
 	return newPosition;

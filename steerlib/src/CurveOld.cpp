@@ -1,4 +1,4 @@
-// Copyright (c) 2015 Nilay Chakraborty
+//
 // Copyright (c) 2015 Mahyar Khayatkhoei
 // Copyright (c) 2009-2014 Shawn Singh, Glen Berseth, Mubbasir Kapadia, Petros Faloutsos, Glenn Reinman
 // See license.txt for complete license.
@@ -45,25 +45,19 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 {
 #ifdef ENABLE_GUI
 
-	Point p;
+	//================DELETE THIS PART AND THEN START CODING===================
+	static bool flag = false;
+	if (!flag)
+	{
+		std::cerr << "ERROR>>>>Member function drawCurve is not implemented!" << std::endl;
+		flag = true;
+	}
+	//=========================================================================
+
 	// Robustness: make sure there is at least two control point: start and end points
-	if (!checkRobust())
-	{
-		return;
-	}
+
 	// Move on the curve from t=0 to t=finalPoint, using window as step size, and linearly interpolate the curve points
-	glColor3f(curveColor.r,curveColor.g,curveColor.b);
-	glLineWidth(curveThickness);
-	glBegin(GL_LINES);
-	for (int t = 0; t <= controlPoints[controlPoints.size() - 1].time; t++)
-	{
-		if (calculatePoint(p, t))
-		{
-			glVertex3f(p.x, p.y, p.z);
-		}
-	}
-	glEnd();
-	glFlush();
+	
 	return;
 #endif
 }
@@ -71,10 +65,16 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 // Sort controlPoints vector in ascending order: min-first
 void Curve::sortControlPoints()
 {
-	std::sort(controlPoints.begin(),controlPoints.end(), [](CurvePoint a , CurvePoint b)
+
+	std::sort(controlPoints.begin(), controlPoints.end(), [](CurvePoint a, CurvePoint b)
 	{
 		return a.time<b.time;
 	});
+
+	for (std::vector<CurvePoint>::size_type i = 0; i != controlPoints.size(); i++) {
+		std::cout << controlPoints[i].time;
+	}
+
 	return;
 }
 
@@ -110,23 +110,42 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 // Check Roboustness
 bool Curve::checkRobust()
 {
-	if (controlPoints.size() > 1)
+	if (controlPoints.size() > 1) {
 		return true;
-	else
+	}
+	else {
 		return false;
+	}
 }
 
 // Find the current time interval (i.e. index of the next control point to follow according to current time)
 bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 {
-	if (controlPoints[nextPoint+1].time == time)
-	{
+	float previous;
+	float next;
+
+	do{
+		if (nextPoint == 0) {
+			previous = 0;
+		}
+		else {
+			previous = controlPoints[nextPoint - 1].time;
+		}
+
+		if (nextPoint <= controlPoints.size()) {
+			next = controlPoints[nextPoint].time;
+		}
+		else {
+			return false;
+		}
+		std::cout << time << std::endl;
+		std::cout << previous << std::endl;
+		std::cout << next << std::endl;
 		nextPoint++;
-		return true;
-	}
-	else
-		return false;
-	
+	} while (!(time >= previous && time < next));
+
+		nextPoint--;
+	return true;
 }
 
 // Implement Hermite curve
@@ -135,14 +154,22 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 	Point newPosition;
 	float normalTime, intervalTime;
 
+	/*//================DELETE THIS PART AND THEN START CODING===================
+	static bool flag = false;
+	if (!flag)
+	{
+		std::cerr << "ERROR>>>>Member function useHermiteCurve is not implemented!" << std::endl;
+		flag = true;
+	}
+	//=========================================================================*/
 
 	// Calculate time interval, and normal time required for later curve calculations
-	normalTime = controlPoints[nextPoint-1].time;
+	normalTime = controlPoints[nextPoint - 1].time;
 	intervalTime = time;
 	// Calculate position at t = time on Hermite curve
-		newPosition.x = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.x + (intervalTime*intervalTime*intervalTime - 2* intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.x + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.x + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.x;
-		newPosition.y = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.y + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.y + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.y + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.y;
-		newPosition.z = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.z + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.z + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.z + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.z;
+	newPosition.x = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.x + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.x + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.x + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.x;
+	newPosition.y = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.y + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.y + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.y + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.y;
+	newPosition.z = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.z + (intervalTime*intervalTime*intervalTime - 2 * intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.z + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.z + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.z;
 
 	// Return result
 	return newPosition;
@@ -153,7 +180,15 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 {
 	Point newPosition;
 
-	
+	//================DELETE THIS PART AND THEN START CODING===================
+	static bool flag = false;
+	if (!flag)
+	{
+		std::cerr << "ERROR>>>>Member function useCatmullCurve is not implemented!" << std::endl;
+		flag = true;
+	}
+	//=========================================================================
+
 
 	// Calculate time interval, and normal time required for later curve calculations
 
