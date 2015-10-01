@@ -54,13 +54,14 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 	// Move on the curve from t=0 to t=finalPoint, using window as step size, and linearly interpolate the curve points
 	glColor3f(curveColor.r,curveColor.g,curveColor.b);
 	glLineWidth(curveThickness);
-	glBegin(GL_LINES);
+	glBegin(GL_POINTS);
 	for (float t = 0; t <= controlPoints[controlPoints.size() - 1].time; t+=0.001)
 	{
 		if (calculatePoint(p, t))
 		{
 			glVertex3f(p.x, p.y, p.z);
 		}
+		
 	}
 	glEnd();
 	glFlush();
@@ -137,7 +138,7 @@ Point Curve::useHermiteCurve(const unsigned int nextPoint, const float time)
 
 
 	// Calculate time interval, and normal time required for later curve calculations
-	normalTime = controlPoints[nextPoint-1].time;
+	normalTime = controlPoints[nextPoint].time;
 	intervalTime = time;
 	// Calculate position at t = time on Hermite curve
 		newPosition.x = (2 * intervalTime*intervalTime*intervalTime - 3 * intervalTime*intervalTime + 1)*controlPoints[nextPoint - 1].position.x + (intervalTime*intervalTime*intervalTime - 2* intervalTime*intervalTime + intervalTime)*controlPoints[nextPoint - 1].tangent.x + (-2 * intervalTime*intervalTime*intervalTime + 3 * intervalTime*intervalTime)*controlPoints[nextPoint].position.x + (intervalTime*intervalTime*intervalTime - intervalTime*intervalTime)*controlPoints[nextPoint].tangent.x;
@@ -153,7 +154,16 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 {
 	Point newPosition;
 
-	
+	//================DELETE THIS PART AND THEN START CODING===================
+	static bool flag = false;
+	if (!flag)
+	{
+		std::cerr << "ERROR>>>>Member function useCatmullCurve is not implemented!" << std::endl;
+		flag = true;
+	}
+	//=========================================================================
+
+
 
 	// Calculate time interval, and normal time required for later curve calculations
 
