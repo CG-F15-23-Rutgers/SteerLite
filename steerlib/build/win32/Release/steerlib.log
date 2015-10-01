@@ -1,12 +1,24 @@
-﻿Build started 9/30/2015 8:39:31 PM.
+﻿Build started 10/1/2015 2:29:43 AM.
      1>Project "C:\Users\NILAY\Computer_Graphics\SteerLite\steerlib\build\win32\steerlib.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /I..\..\..\util\include /I..\..\include /I..\..\..\external /Zi /nologo /W3 /WX- /MP /O2 /Oi /Ot /GL /D _COMPILING_WIN32_STEERLIB /D ENABLE_GUI /D _WINDLL /D _MBCS /Gm- /EHsc /MD /GS /Gy /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /errorReport:prompt ..\..\src\Curve.cpp
      1>cl : Command line warning D9002: ignoring unknown option '/arch:SSE2'
          Curve.cpp
-     1>..\..\src\Curve.cpp(56): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-     1>..\..\src\Curve.cpp(95): warning C4101: 'intervalTime': unreferenced local variable
-     1>..\..\src\Curve.cpp(95): warning C4101: 'normalTime': unreferenced local variable
+     1>..\..\src\Curve.cpp(68): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextTanZ': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextTanX': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousY': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousTanX': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousTanY': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousZ': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextZ': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousTanZ': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextX': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextY': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'previousX': unreferenced local variable
+     1>..\..\src\Curve.cpp(54): warning C4101: 'nextTanY': unreferenced local variable
+     1>..\..\src\Curve.cpp(117): warning C4101: 'intervalTime': unreferenced local variable
+     1>..\..\src\Curve.cpp(117): warning C4101: 'normalTime': unreferenced local variable
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\steerlib.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\ util.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\steerlib.pdb" /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\steerlib.lib" /MACHINE:X64 /DLL Release\AgentMetricsCollector.obj
          Release\BehaviorParameter.obj
@@ -62,4 +74,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:07.21
+Time Elapsed 00:00:06.13
