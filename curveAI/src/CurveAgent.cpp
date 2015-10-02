@@ -15,7 +15,7 @@
 
 /// @file CurveAgent.cpp
 /// @brief Implements the CurveAgent class.
-
+using namespace std;
 #define MAX_FORCE_MAGNITUDE 3.0f
 #define MAX_SPEED 1.3f
 #define AGENT_MASS 1.0f
