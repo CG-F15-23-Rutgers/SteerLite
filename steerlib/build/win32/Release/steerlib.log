@@ -1,4 +1,4 @@
-﻿Build started 10/2/2015 3:55:47 AM.
+﻿Build started 10/2/2015 12:05:15 PM.
      1>Project "C:\Users\NILAY\Computer_Graphics\SteerLite\steerlib\build\win32\steerlib.vcxproj" on node 2 (Build target(s)).
      1>Link:
          steerlib.vcxproj -> C:\Users\NILAY\Computer_Graphics\SteerLite\build\win32\Release\steerlib.dll
@@ -6,4 +6,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.16
+Time Elapsed 00:00:00.18
