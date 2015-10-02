@@ -51,8 +51,6 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 	// Calculate time interval, and normal time required for later curve calculations
 	float previousTime, nextTime;
 
-	float nextX, nextY, nextZ, previousX, previousY, previousZ, nextTanX, nextTanY, nextTanZ, previousTanX, previousTanY, previousTanZ;
-
 	// Robustness: make sure there is at least two control point: start and end points
 	if (!checkRobust())
 	{
@@ -206,7 +204,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 {
 	Point newPosition;
 
-	//================DELETE THIS PART AND THEN START CODING===================
+	/*//================DELETE THIS PART AND THEN START CODING===================
 	static bool flag = false;
 	if (!flag)
 	{
@@ -214,6 +212,59 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 		flag = true;
 	}
 	//=========================================================================
+	*/
+	float normalTime, intervalTime;
+
+
+	// Calculate time interval, and normal time required for later curve calculations
+	float previousTime, nextTime;
+
+	previousTime = controlPoints[nextPoint - 1].time;
+
+	nextTime = controlPoints[nextPoint].time;
+
+
+	intervalTime = nextTime - previousTime;
+	normalTime = (time - previousTime) / intervalTime;
+	float tangent1x, tangent1y, tangent1z, tangent2x, tangent2y, tangent2z;
+
+	if (nextPoint == 0)
+	{
+		tangent1x= ((controlPoints[2].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[1].position.x - controlPoints[0].position.x) / (controlPoints[1].time - controlPoints[0].time)) - ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[2].position.x - controlPoints[0].position.x) / (controlPoints[2].time - controlPoints[0].time));
+		tangent1y= ((controlPoints[2].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[1].position.y - controlPoints[0].position.y) / (controlPoints[1].time - controlPoints[0].time)) - ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[2].position.y - controlPoints[0].position.y) / (controlPoints[2].time - controlPoints[0].time));
+		tangent1z= ((controlPoints[2].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[1].position.z - controlPoints[0].position.z) / (controlPoints[1].time - controlPoints[0].time)) - ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[2].position.z - controlPoints[0].position.z) / (controlPoints[2].time - controlPoints[0].time));
+		tangent2x = ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[2].position.x - controlPoints[1].position.x) / (controlPoints[2].time - controlPoints[1].time)) + ((controlPoints[2].time - controlPoints[1].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[1].position.x - controlPoints[0].position.x) / (controlPoints[1].time - controlPoints[0].time));
+		tangent2y = ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[2].position.y - controlPoints[1].position.y) / (controlPoints[2].time - controlPoints[1].time)) + ((controlPoints[2].time - controlPoints[1].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[1].position.y - controlPoints[0].position.y) / (controlPoints[1].time - controlPoints[0].time));
+		tangent2z = ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[2].position.z - controlPoints[1].position.z) / (controlPoints[2].time - controlPoints[1].time)) + ((controlPoints[2].time - controlPoints[1].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[1].position.z - controlPoints[0].position.z) / (controlPoints[1].time - controlPoints[0].time));
+	}
+	else if (nextPoint==controlPoints.size()-2)
+	{
+		tangent1x = ((controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint + 1].position.x - controlPoints[nextPoint].position.x) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint].position.x - controlPoints[nextPoint - 1].position.x) / (controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time));
+		tangent1y = ((controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint + 1].position.y - controlPoints[nextPoint].position.y) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint].position.y - controlPoints[nextPoint - 1].position.y) / (controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time));
+		tangent1z = ((controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint + 1].position.z - controlPoints[nextPoint].position.z) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint - 1].time))*((controlPoints[nextPoint].position.z - controlPoints[nextPoint - 1].position.z) / (controlPoints[nextPoint].time - controlPoints[nextPoint - 1].time));
+		tangent2x = ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.x - controlPoints[nextPoint + 1].position.x) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 1].position.x - controlPoints[nextPoint].position.x) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time));
+		tangent2y = ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.y - controlPoints[nextPoint + 1].position.y) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 1].position.y - controlPoints[nextPoint].position.y) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time));
+		tangent2z = ((controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.z - controlPoints[nextPoint + 1].position.z) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint + 1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 1].position.z - controlPoints[nextPoint].position.z) / (controlPoints[nextPoint + 1].time - controlPoints[nextPoint].time));
+	}
+	else
+	{
+		tangent1x = ((controlPoints[nextPoint].time - controlPoints[nextPoint-1].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint+1].position.x - controlPoints[nextPoint].position.x) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint].position.x - controlPoints[nextPoint-1].position.x) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time));
+		tangent1y = ((controlPoints[nextPoint].time - controlPoints[nextPoint-1].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint+1].position.y - controlPoints[nextPoint].position.y) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint].position.y - controlPoints[nextPoint-1].position.y) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time));
+		tangent1z = ((controlPoints[nextPoint].time - controlPoints[nextPoint-1].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint+1].position.z - controlPoints[nextPoint].position.z) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time)) + ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint].position.z - controlPoints[nextPoint-1].position.z) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time));
+		tangent2x = ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.x - controlPoints[nextPoint+1].position.x) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint+1].position.x - controlPoints[nextPoint].position.x) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time));
+		tangent2y = ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.y - controlPoints[nextPoint+1].position.y) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint+1].position.y - controlPoints[nextPoint].position.y) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time));
+		tangent2z = ((controlPoints[nextPoint+1].time - controlPoints[nextPoint].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint + 2].position.z - controlPoints[nextPoint+1].position.z) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time)) + ((controlPoints[nextPoint + 2].time - controlPoints[nextPoint+1].time) / (controlPoints[nextPoint + 2].time - controlPoints[nextPoint].time))*((controlPoints[nextPoint+1].position.z - controlPoints[nextPoint].position.z) / (controlPoints[nextPoint+1].time - controlPoints[nextPoint].time));
+	}
+	
+	
+
+	// Calculate position at t = time on Hermite curve
+
+	newPosition.x = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.x + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1x + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.x + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2x;
+
+	newPosition.y = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.y + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1y + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.y + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2y;
+
+	newPosition.z = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.z + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1z + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.z + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2z;
 
 
 	// Calculate time interval, and normal time required for later curve calculations
