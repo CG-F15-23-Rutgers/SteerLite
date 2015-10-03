@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <set>
 #include <util/Geometry.h>
 #include <util/Curve.h>
 #include <util/Color.h>
@@ -47,17 +48,19 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 #ifdef ENABLE_GUI
 	
 	float previousTime, nextTime;
-
+	
 	// Move on the curve from t=0 to t=finalPoint, using window as step size, and linearly interpolate the curve points
 	glColor3f(curveColor.r, curveColor.g, curveColor.b);
 	glLineWidth(curveThickness);
-	glBegin(GL_POINTS);
+	glBegin(GL_LINES);
 	int i = 1;
 	Point newPosition;
-	glVertex3f(controlPoints[0].position.x, controlPoints[0].position.y, controlPoints[0].position.z);
+	Point oldPosition;
+	oldPosition = controlPoints[0].position;
 	
-	for (float t = controlPoints[0].time; t <= controlPoints[controlPoints.size() - 1].time; t += 0.001)
+	for (float t = controlPoints[0].time; t <= controlPoints[controlPoints.size() - 1].time; t += (float)window)
 	{
+		std::cout << t << std::endl;
 		if (type == hermiteCurve)
 		{
 			newPosition = useHermiteCurve(i, t);
@@ -66,9 +69,12 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 		{
 			newPosition = useCatmullCurve(i, t);
 		}
-			glVertex3f(newPosition.x, newPosition.y, newPosition.z);
-			if(t>=controlPoints[i].time)
-				i++;
+		//glNormal(Vector(0.0f, 1.0f, 0.0f));
+		glVertex3f(oldPosition.x, oldPosition.y, oldPosition.z);
+		glVertex3f(newPosition.x, newPosition.y, newPosition.z);
+		oldPosition = newPosition;
+		if(t>=controlPoints[i].time)
+			i++;
 	}
 	glEnd();
 	glFlush();
@@ -81,11 +87,27 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 // Sort controlPoints vector in ascending order: min-first
 void Curve::sortControlPoints()
 {
-
 	std::sort(controlPoints.begin(), controlPoints.end(), [](CurvePoint a, CurvePoint b)
 	{
 		return a.time<b.time;
 	});
+
+	//Remove duplicate times
+	std::set<int> repeated;
+
+	for (int i = 0; i < controlPoints.size() - 1; i++) {
+		for (int j = i + 1; j < controlPoints.size(); j++) {
+			if (controlPoints[i].time == controlPoints[j].time) {
+				repeated.insert(j);
+			}
+		}
+	}
+
+	int removedNum = 0;
+	for (std::set<int>::iterator it = repeated.begin(); it != repeated.end(); ++it){
+		controlPoints.erase(controlPoints.begin() + *it - removedNum);
+		removedNum++;
+	}
 
 	return;
 }
@@ -122,13 +144,13 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 // Check Roboustness
 bool Curve::checkRobust()
 {
-	if (controlPoints.size() > 1) {
+	int minNumPoints = 2;
+	if (type == catmullCurve)
+	{
+		minNumPoints = 3;
+	}
 
-		for (int i = 0; i < controlPoints.size() - 1; i++)
-			for (int j = i + 1; j < controlPoints.size(); j++)
-				if (controlPoints[i].time == controlPoints[j].time)
-					controlPoints.erase(controlPoints.begin() + j);
-
+	if (controlPoints.size() >= minNumPoints) {
 		return true;
 	}
 	else {
@@ -142,27 +164,38 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 	float previous;
 	float next;
 
-	do{
-		if (nextPoint == 0) {
-			previous = controlPoints[nextPoint].time;
-		}
-		else {
-			previous = controlPoints[nextPoint - 1].time;
-		}
+	nextPoint = 0;
 
-		if (nextPoint <= controlPoints.size()) {
-			next = controlPoints[nextPoint].time;
-		}
-		else {
+	if (controlPoints.size() > 0) {
+		float maxTime = controlPoints[controlPoints.size() - 1].time;
+		if (time > maxTime) {
 			return false;
 		}
-		nextPoint++;
-	} while (!(time >= previous && time < next));
+		do {
+			if (nextPoint == 0) {
+				previous = controlPoints[nextPoint].time;
+			}
+			else {
+				previous = controlPoints[nextPoint - 1].time;
+			}
 
-		nextPoint--;
+			if (nextPoint < controlPoints.size()) {
+				next = controlPoints[nextPoint].time;
+			}
+			else {
+				return false;
+			}
 
-		if (nextPoint == controlPoints.size())
-			return false;
+			nextPoint++;
+			
+		} while (!(time >= previous && time < next) && time <= maxTime);
+	}
+
+	nextPoint--;
+
+	if (nextPoint == controlPoints.size()){
+		return false;
+	}
 
 	return true;
 }
