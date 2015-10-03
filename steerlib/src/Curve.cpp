@@ -123,6 +123,12 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 bool Curve::checkRobust()
 {
 	if (controlPoints.size() > 1) {
+
+		for (int i = 0; i < controlPoints.size() - 1; i++)
+			for (int j = i + 1; j < controlPoints.size(); j++)
+				if (controlPoints[i].time == controlPoints[j].time)
+					controlPoints.erase(controlPoints.begin() + j);
+
 		return true;
 	}
 	else {
