@@ -60,7 +60,6 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 	
 	for (float t = controlPoints[0].time; t <= controlPoints[controlPoints.size() - 1].time; t += (float)window)
 	{
-		std::cout << t << std::endl;
 		if (type == hermiteCurve)
 		{
 			newPosition = useHermiteCurve(i, t);
