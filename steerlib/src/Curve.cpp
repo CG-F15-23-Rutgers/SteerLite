@@ -68,7 +68,6 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 		{
 			newPosition = useCatmullCurve(i, t);
 		}
-		//glNormal(Vector(0.0f, 1.0f, 0.0f));
 		glVertex3f(oldPosition.x, oldPosition.y, oldPosition.z);
 		glVertex3f(newPosition.x, newPosition.y, newPosition.z);
 		oldPosition = newPosition;
@@ -86,6 +85,7 @@ void Curve::drawCurve(Color curveColor, float curveThickness, int window)
 // Sort controlPoints vector in ascending order: min-first
 void Curve::sortControlPoints()
 {
+	//Sort control points
 	std::sort(controlPoints.begin(), controlPoints.end(), [](CurvePoint a, CurvePoint b)
 	{
 		return a.time<b.time;
@@ -143,7 +143,10 @@ bool Curve::calculatePoint(Point& outputPoint, float time)
 // Check Roboustness
 bool Curve::checkRobust()
 {
+	//Hermite curve requires 2 points
 	int minNumPoints = 2;
+
+	//Catmull-Rom requires 3 points
 	if (type == catmullCurve)
 	{
 		minNumPoints = 3;
@@ -166,11 +169,14 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 	nextPoint = 0;
 
 	if (controlPoints.size() > 0) {
+		//Find time of last point
 		float maxTime = controlPoints[controlPoints.size() - 1].time;
 		if (time > maxTime) {
 			return false;
 		}
+		//Find time interval for current point
 		do {
+			//Find time for previous point
 			if (nextPoint == 0) {
 				previous = controlPoints[nextPoint].time;
 			}
@@ -178,6 +184,7 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 				previous = controlPoints[nextPoint - 1].time;
 			}
 
+			//Find time for next point
 			if (nextPoint < controlPoints.size()) {
 				next = controlPoints[nextPoint].time;
 			}
@@ -192,6 +199,7 @@ bool Curve::findTimeInterval(unsigned int& nextPoint, float time)
 
 	nextPoint--;
 
+	//Interval not found
 	if (nextPoint == controlPoints.size()){
 		return false;
 	}
@@ -232,17 +240,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 {
 	Point newPosition;
 
-	/*//================DELETE THIS PART AND THEN START CODING===================
-	static bool flag = false;
-	if (!flag)
-	{
-		std::cerr << "ERROR>>>>Member function useCatmullCurve is not implemented!" << std::endl;
-		flag = true;
-	}
-	//=========================================================================
-	*/
 	float normalTime, intervalTime;
-
 
 	// Calculate time interval, and normal time required for later curve calculations
 	float previousTime, nextTime;
@@ -256,6 +254,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 	normalTime = (time - previousTime) / intervalTime;
 	float tangent1x, tangent1y, tangent1z, tangent2x, tangent2y, tangent2z;
 
+	//Case 1: Starting endpoint
 	if (nextPoint == 1)
 	{
 		tangent1x= ((controlPoints[2].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[1].position.x - controlPoints[0].position.x) / (controlPoints[1].time - controlPoints[0].time)) - ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[1].time))*((controlPoints[2].position.x - controlPoints[0].position.x) / (controlPoints[2].time - controlPoints[0].time));
@@ -265,6 +264,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 		tangent2y = ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[2].position.y - controlPoints[1].position.y) / (controlPoints[2].time - controlPoints[1].time)) + ((controlPoints[2].time - controlPoints[1].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[1].position.y - controlPoints[0].position.y) / (controlPoints[1].time - controlPoints[0].time));
 		tangent2z = ((controlPoints[1].time - controlPoints[0].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[2].position.z - controlPoints[1].position.z) / (controlPoints[2].time - controlPoints[1].time)) + ((controlPoints[2].time - controlPoints[1].time) / (controlPoints[2].time - controlPoints[0].time))*((controlPoints[1].position.z - controlPoints[0].position.z) / (controlPoints[1].time - controlPoints[0].time));
 	}
+	//Case 2: General middle point
 	else if (nextPoint==controlPoints.size()-1)
 	{
 		
@@ -275,6 +275,7 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 		tangent2y = ((controlPoints[nextPoint].time - controlPoints[nextPoint - 2].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint-1].position.y - controlPoints[nextPoint - 2].position.y) / (controlPoints[nextPoint-1].time - controlPoints[nextPoint - 2].time)) - ((controlPoints[nextPoint-1].time - controlPoints[nextPoint - 2].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint].position.y - controlPoints[nextPoint - 2].position.y) / (controlPoints[nextPoint].time - controlPoints[nextPoint - 2].time));
 		tangent2z = ((controlPoints[nextPoint].time - controlPoints[nextPoint - 2].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint-1].position.z - controlPoints[nextPoint - 2].position.z) / (controlPoints[nextPoint-1].time - controlPoints[nextPoint - 2].time)) - ((controlPoints[nextPoint-1].time - controlPoints[nextPoint - 2].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time))*((controlPoints[nextPoint].position.z - controlPoints[nextPoint - 2].position.z) / (controlPoints[nextPoint].time - controlPoints[nextPoint - 2].time));
 	}
+	//Case 3: Ending endpoint
 	else
 	{
 		tangent1x = ((controlPoints[nextPoint-1].time - controlPoints[nextPoint-2].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-2].time))*((controlPoints[nextPoint].position.x - controlPoints[nextPoint-1].position.x) / (controlPoints[nextPoint].time - controlPoints[nextPoint-1].time)) + ((controlPoints[nextPoint].time - controlPoints[nextPoint-1].time) / (controlPoints[nextPoint].time - controlPoints[nextPoint-2].time))*((controlPoints[nextPoint-1].position.x - controlPoints[nextPoint-2].position.x) / (controlPoints[nextPoint-1].time - controlPoints[nextPoint-2].time));
@@ -287,18 +288,13 @@ Point Curve::useCatmullCurve(const unsigned int nextPoint, const float time)
 	
 	
 
-	// Calculate position at t = time on Hermite curve
+	// Calculate position at t = time on Catmull-Rom curve
 
 	newPosition.x = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.x + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1x + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.x + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2x;
 
 	newPosition.y = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.y + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1y + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.y + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2y;
 
 	newPosition.z = (1 + 2 * normalTime)*(1 - normalTime)*(1 - normalTime)*controlPoints[nextPoint - 1].position.z + normalTime*(1 - normalTime)*(1 - normalTime)*intervalTime*tangent1z + normalTime*normalTime*(3 - 2 * normalTime)*controlPoints[nextPoint].position.z + normalTime*normalTime*(normalTime - 1)*intervalTime*tangent2z;
-
-
-	// Calculate time interval, and normal time required for later curve calculations
-
-	// Calculate position at t = time on Catmull-Rom curve
 	
 	// Return result
 	return newPosition;
