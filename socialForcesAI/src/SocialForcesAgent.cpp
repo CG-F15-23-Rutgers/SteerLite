@@ -9,6 +9,7 @@
 #include "SocialForcesAgent.h"
 #include "SocialForcesAIModule.h"
 #include "SocialForces_Parameters.h"
+#include "util/Color.h"
 // #include <math.h>
 
 
@@ -813,24 +814,39 @@ bool SocialForcesAgent::runLongTermPlanning()
 	//==========================================================================
 
 	// run the main a-star search here
-	std::vector<Util::Point> agentPath;
-	Util::Point pos =  position();
+	computePlan();
 
-	if ( !gSpatialDatabase->findPath(pos, _goalQueue.front().targetLocation,
-			agentPath, (unsigned int) 50000))
+	for (int i = 1; i < __path.size(); i++)
 	{
-		return false;
-	}
-
-	for  (int i=1; i <  agentPath.size(); i++)
-	{
-		_midTermPath.push_back(agentPath.at(i));
+		_midTermPath.push_back(__path.at(i));
 		if ((i % FURTHEST_LOCAL_TARGET_DISTANCE) == 0)
 		{
-			_waypoints.push_back(agentPath.at(i));
+			_waypoints.push_back(__path.at(i));
 		}
 	}
 	return true;
+}
+
+void SocialForcesAgent::computePlan()
+{
+	std::cout << "\nComputing agent plan ";
+	Util::Point global_goal = _goalQueue.front().targetLocation;
+	if (astar.computePath(__path, _position, _goalQueue.front().targetLocation, gSpatialDatabase, true))
+	{
+
+		while (!_goalQueue.empty())
+			_goalQueue.pop();
+
+		for (int i = 0; i<__path.size(); ++i)
+		{
+			SteerLib::AgentGoalInfo goal_path_pt;
+			goal_path_pt.targetLocation = __path[i];
+			_goalQueue.push(goal_path_pt);
+	}
+		SteerLib::AgentGoalInfo goal_path_pt;
+		goal_path_pt.targetLocation = global_goal;
+		_goalQueue.push(goal_path_pt);
+}
 }
 
 
@@ -844,31 +860,17 @@ bool SocialForcesAgent::runLongTermPlanning2()
 	//==========================================================================
 
 	// run the main a-star search here
-	std::vector<Util::Point> agentPath;
-	Util::Point pos =  position();
-	if (gEngine->isAgentSelected(this))
+	computePlan();
+
+	for (int i = 1; i < __path.size(); i++)
 	{
-		// std::cout << "agent" << this->id() << " is running planning again" << std::endl;
-	}
-
-	if ( !gSpatialDatabase->findSmoothPath(pos, _goalQueue.front().targetLocation,
-			agentPath, (unsigned int) 50000))
-	{
-		return false;
-	}
-
-	// Push path into _waypoints
-
-	// Skip first node that is at location of agent
-	for  (int i=1; i <  agentPath.size(); i++)
-	{
-		_waypoints.push_back(agentPath.at(i));
-
+		_waypoints.push_back(__path.at(i));
 	}
 
 	return true;
 
 }
+
 
 
 void SocialForcesAgent::draw()
@@ -889,21 +891,21 @@ void SocialForcesAgent::draw()
 		else {
 			Util::DrawLib::drawAgentDisc(_position, _forward, _radius);
 		}
-		Util::DrawLib::drawFlag( this->currentGoal().targetLocation, Color(0.5f,0.8f,0), 2);
-		if ( this->currentGoal().goalType == GOAL_TYPE_AXIS_ALIGNED_BOX_GOAL )
+		Util::DrawLib::drawFlag(this->currentGoal().targetLocation, Color(0.5f, 0.8f, 0), 2);
+		if (this->currentGoal().goalType == GOAL_TYPE_AXIS_ALIGNED_BOX_GOAL)
 		{
-			Color color(0.4,0.9,0.4);
+			Color color(0.4, 0.9, 0.4);
 			DrawLib::glColor(color);
 			DrawLib::drawQuad(Point(this->currentGoal().targetRegion.xmin, 0.1, this->currentGoal().targetRegion.zmin),
-					Point(this->currentGoal().targetRegion.xmin, 0.1, this->currentGoal().targetRegion.zmax),
-					Point(this->currentGoal().targetRegion.xmax, 0.1, this->currentGoal().targetRegion.zmax),
-					Point(this->currentGoal().targetRegion.xmax, 0.1, this->currentGoal().targetRegion.zmin));
+				Point(this->currentGoal().targetRegion.xmin, 0.1, this->currentGoal().targetRegion.zmax),
+				Point(this->currentGoal().targetRegion.xmax, 0.1, this->currentGoal().targetRegion.zmax),
+				Point(this->currentGoal().targetRegion.xmax, 0.1, this->currentGoal().targetRegion.zmin));
 		}
 		int i;
-		for (i=0; ( _waypoints.size() > 1 ) && (i < (_waypoints.size() - 1)); i++)
+		for (i = 0; (_waypoints.size() > 1) && (i < (_waypoints.size() - 1)); i++)
 		{
-			DrawLib::drawLine(_waypoints.at(i), _waypoints.at(i+1), gYellow);
-			DrawLib::drawStar(_waypoints.at(i), Util::Vector(1,0,0), 0.34f, gBlue);
+			DrawLib::drawLine(_waypoints.at(i), _waypoints.at(i + 1), gYellow);
+			DrawLib::drawStar(_waypoints.at(i), Util::Vector(1, 0, 0), 0.34f, gBlue);
 		}
 		// DrawLib::drawStar(_waypoints.at(i), Util::Vector(1,0,0), 0.34f, gBlue);
 	}
@@ -912,6 +914,13 @@ void SocialForcesAgent::draw()
 	}
 	if (_goalQueue.front().goalType == SteerLib::GOAL_TYPE_SEEK_STATIC_TARGET) {
 		Util::DrawLib::drawFlag(_goalQueue.front().targetLocation);
+	}
+	if (__path.size()>0)
+	{
+		for (int i = 1; i < __path.size(); ++i) {
+			Util::DrawLib::drawLine(__path[i - 1], __path[i], gYellow, 2);
+		}
+		Util::DrawLib::drawCircle(__path[__path.size() - 1], Util::Color(0.0f, 1.0f, 0.0f));
 	}
 
 #ifdef DRAW_COLLISIONS

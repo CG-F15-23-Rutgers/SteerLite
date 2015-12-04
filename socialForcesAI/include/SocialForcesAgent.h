@@ -20,6 +20,7 @@
 // #include "SimpleAgent.h"
 // #include "SocialForcesAIModule.h"
 #include "SocialForces_Parameters.h"
+#include "planning/AStarPlanner.h";
 
 
 /**
@@ -86,6 +87,7 @@ class SocialForcesAgent : public SteerLib::AgentInterface
         Util::Vector _forward; // normalized version of velocity
         Util::Vector _prefVelocity; // This is the velocity the agent wants to be at
         Util::Vector _newVelocity;
+		std::vector<Util::Point> __path;
         Util::Color _color;
         float _radius;
 
@@ -126,6 +128,12 @@ class SocialForcesAgent : public SteerLib::AgentInterface
         std::vector<Util::Point> _midTermPath;
         // holds the location of the best local target along the midtermpath
         Util::Point _currentLocalTarget;
+
+		/*
+		computePlan calls the A* function to compute the path and store in in the global __path variable.
+		*/
+		void computePlan();
+		SteerLib::AStarPlanner astar;
 
         friend class SocialForcesAIModule;
 
