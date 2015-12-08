@@ -548,6 +548,66 @@ if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAI" ]]; then
 	popd > /dev/null
 fi
 
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAIBN" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES BN module"
+	echo "==================================="
+	pushd ../socialForcesAIBottleneck/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_BN_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAICC" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES CC module"
+	echo "==================================="
+	pushd ../socialForcesAICrowdCrossing/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_CC_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAIOC" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES OC module"
+	echo "==================================="
+	pushd ../socialForcesAIOfficeComplex/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_OC_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAIP" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES P module"
+	echo "==================================="
+	pushd ../socialForcesAIPlane/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_P_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAIHW" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES HW module"
+	echo "==================================="
+	pushd ../socialForcesAIHall4Way/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_HW_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
+if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "sfAICus" ]]; then
+	echo "==================================="
+	echo "Building SOCIAL FORCES Cus module"
+	echo "==================================="
+	pushd ../socialForcesAICustom/build > /dev/null
+	$MAKE $MAKE_ARGS
+	SOCIAL_FORCES_Cus_BUILD_RETURN_CODE=$?
+	popd > /dev/null
+fi
+
 if [[ $BUILD_MODULE == "all" || $BUILD_MODULE == "curveAI" ]]; then
 	echo "==================================="
 	echo "Building Curve module"
@@ -645,6 +705,42 @@ if [ $SOCIAL_FORCES_BUILD_RETURN_CODE == 0 ]; then
     echo "copying sfAI.o to $MODULES_DIR"
     cp ../socialForcesAI/build/sfAI.o $MODULES_DIR
     SOCIAL_FORCES_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_BN_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAIBN.o to $MODULES_DIR"
+    cp ../socialForcesAIBottleneck/build/sfAIBN.o $MODULES_DIR
+    SOCIAL_FORCES_BN_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_CC_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAICC.o to $MODULES_DIR"
+    cp ../socialForcesAICrowdCrossing/build/sfAICC.o $MODULES_DIR
+    SOCIAL_FORCES_CC_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_HW_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAIHW.o to $MODULES_DIR"
+    cp ../socialForcesAIHall4Way/build/sfAIHW.o $MODULES_DIR
+    SOCIAL_FORCES_HW_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_OC_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAIOC.o to $MODULES_DIR"
+    cp ../socialForcesAIOfficeComplex/build/sfAIOC.o $MODULES_DIR
+    SOCIAL_FORCES_OC_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_P_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAIP.o to $MODULES_DIR"
+    cp ../socialForcesAIPlane/build/sfAIP.o $MODULES_DIR
+    SOCIAL_FORCES_P_INSTALL_RETURN_CODE=$?
+fi
+
+if [ $SOCIAL_FORCES_Cus_BUILD_RETURN_CODE == 0 ]; then
+    echo "copying sfAICus.o to $MODULES_DIR"
+    cp ../socialForcesAICustom/build/sfAICus.o $MODULES_DIR
+    SOCIAL_FORCES_Cus_INSTALL_RETURN_CODE=$?
 fi
 
 echo ""
@@ -770,6 +866,66 @@ else
 	echo "* SOCIAL_FORCES built successfully, but could not be installed to $MODULES_DIR."
     else
 	echo "  SOCIAL_FORCES built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_BN_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES_BN did not build properly."
+else
+    if [ $SOCIAL_FORCES_BN_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_BN built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_BN built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_CC_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES did not build properly."
+else
+    if [ $SOCIAL_FORCES_CC_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_CC built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_CC built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_HW_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES did not build properly."
+else
+    if [ $SOCIAL_FORCES_HW_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_HW built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_HW built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_OC_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES_OC did not build properly."
+else
+    if [ $SOCIAL_FORCES_OC_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_OC built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_OC built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_P_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES_P did not build properly."
+else
+    if [ $SOCIAL_FORCES_P_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_P built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_P built and installed successfully."
+    fi
+fi
+
+if [ $SOCIAL_FORCES_Cus_BUILD_RETURN_CODE != 0 ]; then
+    echo "* SOCIAL_FORCES_Cus did not build properly."
+else
+    if [ $SOCIAL_FORCES_Cus_INSTALL_RETURN_CODE != 0 ]; then
+	echo "* SOCIAL_FORCES_Cus built successfully, but could not be installed to $MODULES_DIR."
+    else
+	echo "  SOCIAL_FORCES_Cus built and installed successfully."
     fi
 fi
 

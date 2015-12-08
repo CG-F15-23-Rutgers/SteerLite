@@ -19,7 +19,7 @@
 
 #define COLLISION_COST  1000
 #define GRID_STEP  1
-#define OBSTACLE_CLEARANCE 1
+#define OBSTACLE_CLEARANCE 0
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 #define MAX(X,Y) ((X) > (Y) ? (X) : (Y))
 
@@ -137,7 +137,7 @@ namespace SteerLib
 					currentNode = currentNode->parent;
 					agent_path.insert(agent_path.begin(), currentNode->point);
 				}
-				std::cout << "The number of expanded nodes is " << closedSet.size() << std::endl;
+				//std::cout << "The number of expanded nodes is " << closedSet.size() << std::endl;
 				return true;
 			}
 			openSet.erase(openSet.begin() + currentIndex);
@@ -150,7 +150,7 @@ namespace SteerLib
 					Util::Point nextPoint(currentPoint.x + x, 0, currentPoint.z + z);
 					int nextIndex = gSpatialDatabase->getCellIndexFromLocation(nextPoint.x, nextPoint.z);
 					gSpatialDatabase->getLocationFromIndex(nextIndex, nextPoint);
-					std::cout << nextIndex << std::endl;
+					//std::cout << nextIndex << std::endl;
 					if (canBeTraversed(nextIndex)) {
 
 						float dist = 1;
@@ -199,7 +199,7 @@ namespace SteerLib
 			}
 		}
 		//TODO
-		std::cout << "\nIn A*";
+		//std::cout << "\nIn A*";
 		return false;
 	}
 
@@ -253,7 +253,7 @@ namespace SteerLib
 					currentNode = currentNode->parent;
 					agent_path.insert(agent_path.begin(), currentNode->point);
 				}
-				std::cout << "The number of expanded nodes is " << closedSet.size() << std::endl;
+				//std::cout << "The number of expanded nodes is " << closedSet.size() << std::endl;
 				return true;
 			}
 			openSet.erase(openSet.begin() + currentIndex);
@@ -270,7 +270,7 @@ namespace SteerLib
 					Util::Point nextPoint(currentPoint.x + x, 0, currentPoint.z + z);
 					int nextIndex = gSpatialDatabase->getCellIndexFromLocation(nextPoint.x, nextPoint.z);
 					gSpatialDatabase->getLocationFromIndex(nextIndex, nextPoint);
-					std::cout << nextIndex << std::endl;
+					//std::cout << nextIndex << std::endl;
 					if (canBeTraversed(nextIndex)) {
 
 						float dist = 1;
@@ -316,7 +316,7 @@ namespace SteerLib
 			}
 		}
 		//TODO
-		std::cout << "\nIn A*";
+		//std::cout << "\nIn A*";
 		return false;
 	}
 }

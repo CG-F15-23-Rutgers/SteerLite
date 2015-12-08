@@ -814,7 +814,9 @@ bool SocialForcesAgent::runLongTermPlanning()
 	//==========================================================================
 
 	// run the main a-star search here
-	computePlan();
+	//std::cout << "Calling AStar";
+	astar.computePath(__path, _position, _goalQueue.front().targetLocation, gSpatialDatabase, true);
+	//computePlan();
 
 	for (int i = 1; i < __path.size(); i++)
 	{
@@ -829,9 +831,9 @@ bool SocialForcesAgent::runLongTermPlanning()
 
 void SocialForcesAgent::computePlan()
 {
-	std::cout << "\nComputing agent plan ";
+	//std::cout << "\nComputing agent plan ";
 	Util::Point global_goal = _goalQueue.front().targetLocation;
-	if (astar.computePath(__path, _position, _goalQueue.front().targetLocation, gSpatialDatabase, true))
+	/*if (astar.computePath(__path, _position, _goalQueue.front().targetLocation, gSpatialDatabase, true))
 	{
 
 		while (!_goalQueue.empty())
@@ -846,7 +848,7 @@ void SocialForcesAgent::computePlan()
 		SteerLib::AgentGoalInfo goal_path_pt;
 		goal_path_pt.targetLocation = global_goal;
 		_goalQueue.push(goal_path_pt);
-}
+}*/
 }
 
 
@@ -860,7 +862,8 @@ bool SocialForcesAgent::runLongTermPlanning2()
 	//==========================================================================
 
 	// run the main a-star search here
-	computePlan();
+	//computePlan();
+	astar.computePath(__path, _position, _goalQueue.front().targetLocation, gSpatialDatabase, true);
 
 	for (int i = 1; i < __path.size(); i++)
 	{
@@ -917,9 +920,9 @@ void SocialForcesAgent::draw()
 	}
 	if (__path.size()>0)
 	{
-		for (int i = 1; i < __path.size(); ++i) {
+		/*for (int i = 1; i < __path.size(); ++i) {
 			Util::DrawLib::drawLine(__path[i - 1], __path[i], gYellow, 2);
-		}
+		}*/
 		Util::DrawLib::drawCircle(__path[__path.size() - 1], Util::Color(0.0f, 1.0f, 0.0f));
 	}
 
